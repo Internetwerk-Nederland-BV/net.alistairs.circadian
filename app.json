@@ -39,14 +39,16 @@
       {
         "id": "circadian_changed",
         "title": {
-          "en": "Circadian values changed"
+          "en": "Circadian values changed",
+          "nl": "Circadiaanse waardes veranderd"
         },
         "tokens": [
           {
             "name": "brightness",
             "type": "number",
             "title": {
-              "en": "Brightness"
+              "en": "Brightness",
+              "nl": "Dim niveau"
             },
             "example": 0.9
           },
@@ -54,7 +56,8 @@
             "name": "temperature",
             "type": "number",
             "title": {
-              "en": "Colour Temperature"
+              "en": "Colour Temperature",
+              "nl": "Kleurtemperatuur"
             },
             "example": 0.5
           }
@@ -72,10 +75,12 @@
       {
         "id": "set_adaptive_mode",
         "title": {
-          "en": "Set Mode"
+          "en": "Set Mode",
+          "nl": "Modus Aanpassen"
         },
         "titleFormatted": {
-          "en": "Set Mode to [[mode]]"
+          "en": "Set Mode to [[mode]]",
+          "nl": "Wijzig Modus naar [[mode]]"
         },
         "args": [
           {
@@ -87,25 +92,29 @@
             "type": "dropdown",
             "name": "mode",
             "title": {
-              "en": "Mode"
+              "en": "Mode",
+              "nl": "Modus"
             },
             "values": [
               {
                 "id": "adaptive",
                 "title": {
-                  "en": "Adaptive"
+                  "en": "Adaptive",
+                  "nl": "Adaptief"
                 }
               },
               {
                 "id": "night",
                 "title": {
-                  "en": "Night"
+                  "en": "Night",
+                  "nl": "Nacht"
                 }
               },
               {
                 "id": "manual",
                 "title": {
-                  "en": "Manual"
+                  "en": "Manual",
+                  "nl": "Handmatig"
                 }
               }
             ]
@@ -120,7 +129,8 @@
   "drivers": [
     {
       "name": {
-        "en": "Circadian Zone"
+        "en": "Circadian Zone",
+        "nl": "Circadiaanse Zone"
       },
       "class": "light",
       "capabilities": [
@@ -155,39 +165,48 @@
         {
           "type": "group",
           "label": {
-            "en": "Colour Temperature"
+            "en": "Colour Temperature",
+            "nl": "Kleurtemperatuur"
           },
           "children": [
             {
               "id": "noon_temp",
               "type": "number",
               "label": {
-                "en": "Noon Warmth"
+                "en": "Noon Colour Temperature",
+                "nl": "Kleurtemperatuur Middaguur"
               },
               "value": 40,
               "min": 0,
               "max": 100,
+              "step": 1,
               "hint": {
-                "en": "The coolest colour is 0, the warmest is 100."
+                "en": "The coolest colour is 0, the warmest is 100.",
+                "nl": "De koelste kleur is 0, de warmste is 100."
               },
               "units": {
-                "en": "%"
+                "en": "%",
+                "nl": "%"
               }
             },
             {
               "id": "sunset_temp",
               "type": "number",
               "label": {
-                "en": "Sunset Warmth"
+                "en": "Sunset Colour Temperature",
+                "nl": "Kleurtemperatuur Zonsondergang"
               },
               "value": 100,
               "min": 0,
               "max": 100,
+              "step": 1,
               "hint": {
-                "en": "The coolest colour is 0, the warmest is 100."
+                "en": "The coolest colour is 0, the warmest is 100.",
+                "nl": "De koelste kleur is 0, de warmste is 100."
               },
               "units": {
-                "en": "%"
+                "en": "%",
+                "nl": "%"
               }
             }
           ]
@@ -195,63 +214,86 @@
         {
           "type": "group",
           "label": {
-            "en": "Brightness"
+            "en": "Brightness",
+            "nl": "Dim Niveau"
           },
           "children": [
             {
               "id": "min_brightness",
               "type": "number",
               "label": {
-                "en": "Minimum"
+                "en": "Minimum Brightness",
+                "nl": "Minimale Dim Niveau"
               },
               "value": 10,
               "min": 1,
               "max": 100,
-              "units": "%"
+              "step": 1,
+              "units": {
+                "en": "%",
+                "nl": "%"
+              }
             },
             {
               "id": "max_brightness",
               "type": "number",
               "label": {
-                "en": "Maximum"
+                "en": "Maximum Brightness",
+                "nl": "Maximale Dim Niveau"
               },
               "value": 100,
               "min": 1,
               "max": 100,
-              "units": "%"
+              "step": 1,
+              "units": {
+                "en": "%",
+                "nl": "%"
+              }
             }
           ]
         },
         {
           "type": "group",
           "label": {
-            "en": "Night Mode"
+            "en": "Night Mode",
+            "nl": "Nachtmodus"
           },
           "children": [
             {
               "id": "night_brightness",
               "type": "number",
               "label": {
-                "en": "Night Brightness"
+                "en": "Night Brightness",
+                "nl": "Dim Niveau Nachtmodus"
               },
               "value": 10,
               "min": 1,
               "max": 100,
-              "units": "%"
+              "step": 1,
+              "units": {
+                "en": "%",
+                "nl": "%"
+              }
             },
             {
               "id": "night_temp",
               "type": "number",
               "label": {
-                "en": "Night Temperature"
+                "en": "Night Temperature",
+                "nl": "Kleurtemperatuur Nachtmodus"
               },
               "hint": {
-                "en": "The coolest colour is 0, the warmest is 100."
+                "en": "The coolest colour is 0, the warmest is 100.",
+                "nl": "De koelste kleur is 0, de warmste is 100."
               },
-              "value": 0,
+              "value": 100,
               "min": 0,
               "max": 100,
-              "units": "%"
+              "step": 1,
+              "units": {
+                "en": "%",
+                "nl": "%"
+              }
             }
           ]
         }
