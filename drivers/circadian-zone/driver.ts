@@ -16,29 +16,6 @@ export class CircadianDriver extends Homey.Driver {
    */
   async onInit() {
 
-/*
-const timezone = await this.homey.clock.getTimezone(); // e.g. Europe/Amsterdam
-const formatter = new Intl.DateTimeFormat([], {
-  timeZone: timezone,
-  hour: '2-digit',
-  minute: '2-digit',
-  hour12: false, // Use 24-hour format
-});
-
-const timeParts = formatter.formatToParts(new Date());
-this.log(timeParts);
-const hour = (timeParts.find(part => part.type === 'hour') || {value: 0}).value;
-const minute = (timeParts.find(part => part.type === 'minute') || {value: 0}).value;
-
-this.log(`The time is ${hour}:${minute}`); // e.g. The time is 13:37
-
-this.log(new Date());
-
-const EQ = new Date(2025, 2, 20, 0, 0);
-this.log(EQ);
-this.log(formatter.formatToParts(EQ));
-*/
-
     let _self = this;
     this._circadianValuesChangedFlow = this.homey.flow.getDeviceTriggerCard("circadian_changed");
     this.log('CircadianDriver has been initialized');
@@ -49,24 +26,28 @@ this.log(formatter.formatToParts(EQ));
     })
 
     // Trigger an initial update
-    //await _self._updateCircadianZones();
+    await _self._updateCircadianZones();
 
     // Schedule Updates
     this._intervalId = setInterval(function() {
       _self._updateCircadianZones();
     }, 3 * 60 * 1000);
+
   }
+
 
   /**
    * onUnInit is called when the driver is unintialized
    */
   async onUninit(): Promise<void> {
     
-    this.log('CircadianDriver is shutting down....');
+    this.log("CircadianDriver is shutting down....");
 
     // Stop the timer
     clearInterval(this._intervalId);
+
   }
+
 
   /**
    * onPairListDevices is called when a user is adding a device and the 'list_devices' view is called.
@@ -83,16 +64,20 @@ this.log(formatter.formatToParts(EQ));
     ];
   }
 
+
   /**
    * _updateCircadianZones prompts individual zone devices to update based on the master percentage
    * 
    */
+
   async _updateCircadianZones() {
+
     this.log("Updating circadian zones with recalculated percentage...");
     this._circadianPercentage = this._recalculateCircadianPercentage();
     this.getDevices().forEach(async device => {
       await (device as CircadianZone).updateFromPercentage(this._circadianPercentage);
     });
+
   }
 
   /**
@@ -147,6 +132,7 @@ this.log(formatter.formatToParts(EQ));
     let percentage = (0 - k) * ((now.getTime() - h) / (h - x)) ** 2 + k;
     this.log(`Percentage: ${percentage}%`);
     return percentage;
+
   }
 
   getPercentage(): number {
@@ -162,6 +148,7 @@ this.log(formatter.formatToParts(EQ));
       .trigger(device, tokens, state)
       .catch(this.error)
   }
+
 }
 
 module.exports = CircadianDriver;

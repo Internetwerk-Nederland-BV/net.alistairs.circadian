@@ -2,48 +2,39 @@
   {
     "type": "group",
     "label": {
-      "en": "Colour Temperature",
-      "nl": "Kleurtemperatuur"
+      "en": "Colour Temperature"
     },
     "children": [
       {
         "id": "noon_temp",
         "type": "number",
         "label": {
-          "en": "Noon Colour Temperature",
-          "nl": "Kleurtemperatuur Middaguur"
+          "en": "Noon Warmth"
         },
         "value": 40,
         "min": 0,
         "max": 100,
-        "step": 1,
         "hint": {
-          "en": "The coolest colour is 0, the warmest is 100.",
-          "nl": "De koelste kleur is 0, de warmste is 100."
+          "en": "The coolest colour is 0, the warmest is 100."
         },
         "units": {
-          "en": "%",
-          "nl": "%"
+          "en": "%"
         }
       },
       {
         "id": "sunset_temp",
         "type": "number",
         "label": {
-          "en": "Sunset Colour Temperature",
-          "nl": "Kleurtemperatuur Zonsondergang"
+          "en": "Sunset Warmth"
         },
         "value": 100,
         "min": 0,
         "max": 100,
-        "step": 1,
         "hint": {
-          "en": "The coolest colour is 0, the warmest is 100.",
-          "nl": "De koelste kleur is 0, de warmste is 100."
+          "en": "The coolest colour is 0, the warmest is 100."
         },
         "units": {
-          "en": "%",
-          "nl": "%"
+          "en": "%"
         }
       }
     ]
@@ -51,86 +42,63 @@
   {
     "type": "group",
     "label": {
-      "en": "Brightness",
-      "nl": "Dim Niveau"
+      "en": "Brightness"
     },
     "children": [
       {
         "id": "min_brightness",
         "type": "number",
         "label": {
-          "en": "Minimum Brightness",
-          "nl": "Minimale Dim Niveau"
+          "en": "Minimum"
         },
         "value": 10,
         "min": 1,
         "max": 100,
-        "step": 1,
-        "units": {
-          "en": "%",
-          "nl": "%"
-        }
+        "units": "%"
       },
       {
         "id": "max_brightness",
         "type": "number",
         "label": {
-          "en": "Maximum Brightness",
-          "nl": "Maximale Dim Niveau"
+          "en": "Maximum"
         },
         "value": 100,
         "min": 1,
         "max": 100,
-        "step": 1,
-        "units": {
-          "en": "%",
-          "nl": "%"
-        }
+        "units": "%"
       }
     ]
   },
   {
     "type": "group",
     "label": {
-      "en": "Night Mode",
-      "nl": "Nachtmodus"
+      "en": "Night Mode"
     },
     "children": [
       {
         "id": "night_brightness",
         "type": "number",
         "label": {
-          "en": "Night Brightness",
-          "nl": "Dim Niveau Nachtmodus"
+          "en": "Night Brightness"
         },
         "value": 10,
         "min": 1,
         "max": 100,
-        "step": 1,
-        "units": {
-          "en": "%",
-          "nl": "%"
-        }
-     },
+        "units": "%"
+      },
       {
         "id": "night_temp",
         "type": "number",
         "label": {
-          "en": "Night Temperature",
-          "nl": "Kleurtemperatuur Nachtmodus"
+          "en": "Night Temperature"
         },
         "hint": {
-          "en": "The coolest colour is 0, the warmest is 100.",
-          "nl": "De koelste kleur is 0, de warmste is 100."
+          "en": "The coolest colour is 0, the warmest is 100."
         },
-        "value": 100,
+        "value": 0,
         "min": 0,
         "max": 100,
-        "step": 1,
-        "units": {
-          "en": "%",
-          "nl": "%"
-        }
+        "units": "%"
       }
     ]
   }

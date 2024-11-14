@@ -3,16 +3,14 @@
     {
       "id": "circadian_changed",
       "title": {
-        "en": "Circadian values changed",
-        "nl": "Circadiaanse waardes veranderd"
+        "en": "Circadian values changed"
       },
       "tokens": [
         {
           "name": "brightness",
           "type": "number",
           "title": {
-            "en": "Brightness",
-            "nl": "Dim niveau"
+            "en": "Brightness"
           },
           "example": 0.9
         },
@@ -20,8 +18,7 @@
           "name": "temperature",
           "type": "number",
           "title": {
-            "en": "Colour Temperature",
-            "nl": "Kleurtemperatuur"
+            "en": "Colour Temperature"
           },
           "example": 0.5
         }
@@ -32,41 +29,35 @@
     {
       "id": "set_adaptive_mode",
       "title": {
-        "en": "Set Mode",
-        "nl": "Modus Aanpassen"
+        "en": "Set Mode"
       },
       "titleFormatted": {
-        "en": "Set Mode to [[mode]]",
-        "nl": "Wijzig Modus naar [[mode]]"
+        "en": "Set Mode to [[mode]]"
       },
       "args": [
         {
           "type": "dropdown",
           "name": "mode",
           "title": {
-            "en": "Mode",
-            "nl": "Modus"
+            "en": "Mode"
           },
           "values": [
             {
               "id": "adaptive",
               "title": {
-                "en": "Adaptive",
-                "nl": "Adaptief"
+                "en": "Adaptive"
               }
             },
             {
               "id": "night",
               "title": {
-                "en": "Night",
-                "nl": "Nacht"
+                "en": "Night"
               }
             },
             {
               "id": "manual",
               "title": {
-                "en": "Manual",
-                "nl": "Handmatig"
+                "en": "Manual"
               }
             }
           ]
