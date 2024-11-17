@@ -196,6 +196,26 @@
                 "en": "Sunset Colour Temperature",
                 "nl": "Kleurtemperatuur Zonsondergang"
               },
+              "value": 70,
+              "min": 0,
+              "max": 100,
+              "step": 1,
+              "hint": {
+                "en": "The coolest colour is 0, the warmest is 100.",
+                "nl": "De koelste kleur is 0, de warmste is 100."
+              },
+              "units": {
+                "en": "%",
+                "nl": "%"
+              }
+            },
+            {
+              "id": "midnight_temp",
+              "type": "number",
+              "label": {
+                "en": "Midnight Colour Temperature",
+                "nl": "Kleurtemperatuur Middernacht"
+              },
               "value": 100,
               "min": 0,
               "max": 100,
@@ -219,13 +239,13 @@
           },
           "children": [
             {
-              "id": "min_brightness",
+              "id": "noon_brightness",
               "type": "number",
               "label": {
-                "en": "Minimum Brightness",
-                "nl": "Minimale Dim Niveau"
+                "en": "Noon Brightness",
+                "nl": "Dim Niveau Middaguur"
               },
-              "value": 10,
+              "value": 100,
               "min": 1,
               "max": 100,
               "step": 1,
@@ -235,13 +255,29 @@
               }
             },
             {
-              "id": "max_brightness",
+              "id": "sunset_brightness",
               "type": "number",
               "label": {
-                "en": "Maximum Brightness",
-                "nl": "Maximale Dim Niveau"
+                "en": "Sunset Brightness",
+                "nl": "Dim Niveau Zonsondergang"
               },
-              "value": 100,
+              "value": 55,
+              "min": 1,
+              "max": 100,
+              "step": 1,
+              "units": {
+                "en": "%",
+                "nl": "%"
+              }
+            },
+            {
+              "id": "midnight_brightness",
+              "type": "number",
+              "label": {
+                "en": "Midnight Brightness",
+                "nl": "Dim Niveau Middernacht"
+              },
+              "value": 10,
               "min": 1,
               "max": 100,
               "step": 1,

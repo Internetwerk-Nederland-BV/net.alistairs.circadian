@@ -4,10 +4,10 @@ import { CircadianDriver } from './driver'
 export class CircadianZone extends Homey.Device {
 
   private _mode: string = "adaptive";
-  private _sunsetTemp: number = 1.00;
+  private _sunsetTemp: number = 0.70;
   private _noonTemp: number = 0.40;
   private _midnightTemp: number = 1.00;
-  private _sunsetBrightness: number = 0.10;
+  private _sunsetBrightness: number = 0.55;
   private _noonBrightness: number = 1.00;
   private _midnightBrightness: number = 0.10;
   private _nightTemperature: number = 1.00;
@@ -69,30 +69,29 @@ export class CircadianZone extends Homey.Device {
    */
   async onInit() {
     this._mode = this.getCapabilityValue("adaptive_mode") || this._mode;
-    this._sunsetTemp = (typeof this.getSetting("sunset_temp") !== "undefined") ? Math.round(this.getSetting("sunset_temp")) / 100 : this._sunsetTemp;
-    this._noonTemp = (typeof this.getSetting("noon_temp") !== "undefined") ? Math.round(this.getSetting("noon_temp")) / 100 : this._noonTemp;
-    this._midnightTemp = (typeof this.getSetting("midnight_temp") !== "undefined") ? Math.round(this.getSetting("midnight_temp")) / 100 : this._midnightTemp;
-    if (typeof this.getSetting("min_brightness") !== "undefined" && typeof this.getSetting("max_brightness") !== "undefined" && this.getSetting("min_brightness") !== -1 && this.getSetting("max_brightness") !== -1) {
-      //transfer old min_/max_brightness to noon_/sunset_/midnight_brightness ONCE
-this.log('------------------ BOECHIE UPGRADING FROM OLD VERSION');
-this.log('------------------ max_brightness: ', this.getSetting("max_brightness"));
-this.log('------------------ min_brightness: ', this.getSetting("min_brightness"));
-      this._noonBrightness = this.getSetting("max_brightness");
-      this._sunsetBrightness = this.getSetting("min_brightness");
-      this._midnightBrightness = this.getSetting("min_brightness");
-  //await this.setSettings({min_brightness: -1, max_brightness: -1, noon_brightness: this._noonBrightness, sunset_brightness: this._sunsetBrightness, midnight_brightness: this._midnightBrightness});
+    this._sunsetTemp = (this.getSetting("sunset_temp") !== null) ? Math.round(this.getSetting("sunset_temp")) / 100 : this._sunsetTemp;
+    this._noonTemp = (this.getSetting("noon_temp") !== null) ? Math.round(this.getSetting("noon_temp")) / 100 : this._noonTemp;
+    if (this.getSetting("min_brightness") !== null && this.getSetting("max_brightness") !== null) {
+      //transfer old min_/max_brightness to new noon_/sunset_/midnight_brightness and sunset_temp to new midnight_temp ONCE to retain already existing zones before upgrade
+      this.log('Version upgrade: Upgrading settings from old app version.');
+      this._midnightTemp = this._sunsetTemp;
+      this._noonBrightness = Math.round(this.getSetting("max_brightness")) / 100;
+      this._sunsetBrightness = Math.round(this.getSetting("min_brightness")) / 100;
+      this._midnightBrightness = this._sunsetBrightness;
+      this.setSettings({min_brightness: null, max_brightness: null, midnight_temp: this._midnightTemp * 100, noon_brightness: this._noonBrightness * 100, sunset_brightness: this._sunsetBrightness * 100, midnight_brightness: this._midnightBrightness * 100});
     } else {
-      this._noonBrightness = (typeof this.getSetting("noon_brightness") !== "undefined") ? Math.round(this.getSetting("noon_brightness")) / 100 : this._noonBrightness;
-      this._sunsetBrightness = (typeof this.getSetting("sunset_brightness") !== "undefined") ? Math.round(this.getSetting("sunset_brightness")) / 100 : this._sunsetBrightness;
-      this._midnightBrightness = (typeof this.getSetting("midnight_brightness") !== "undefined") ? Math.round(this.getSetting("midnight_brightness")) / 100 : this._midnightBrightness;
+      this._midnightTemp = (this.getSetting("midnight_temp") !== null) ? Math.round(this.getSetting("midnight_temp")) / 100 : this._midnightTemp;
+      this._noonBrightness = (this.getSetting("noon_brightness") !== null) ? Math.round(this.getSetting("noon_brightness")) / 100 : this._noonBrightness;
+      this._sunsetBrightness = (this.getSetting("sunset_brightness") !== null) ? Math.round(this.getSetting("sunset_brightness")) / 100 : this._sunsetBrightness;
+      this._midnightBrightness = (this.getSetting("midnight_brightness") !== null) ? Math.round(this.getSetting("midnight_brightness")) / 100 : this._midnightBrightness;
     }
-    this._nightTemperature = (typeof this.getSetting("night_temp") !== "undefined") ? Math.round(this.getSetting("night_temp")) / 100 : this._nightTemperature;
-    this._nightBrightness = (typeof this.getSetting("night_brightness") !== "undefined") ? Math.round(this.getSetting("night_brightness")) / 100 : this._nightBrightness;
+    this._nightTemperature = (this.getSetting("night_temp") !== null) ? Math.round(this.getSetting("night_temp")) / 100 : this._nightTemperature;
+    this._nightBrightness = (this.getSetting("night_brightness") !== null) ? Math.round(this.getSetting("night_brightness")) / 100 : this._nightBrightness;
     this._simulatedDay = this.getSetting("simulated_day") || this._simulatedDay;
     this._givenMonth = this.getSetting("given_month") || this._givenMonth;
     this._givenDay = this.getSetting("given_day") || this._givenDay;
-    this._currentTemperature = (typeof this.getCapabilityValue("light_temperature") !== "undefined") ? this.getCapabilityValue("light_temperature") : this._currentTemperature;
-    this._currentBrightness = (typeof this.getCapabilityValue("dim") !== "undefined") ? this.getCapabilityValue("dim") : this._currentBrightness;
+    this._currentTemperature = (this.getCapabilityValue("light_temperature") !== null) ? this.getCapabilityValue("light_temperature") : this._currentTemperature;
+    this._currentBrightness = (this.getCapabilityValue("dim") !== null) ? this.getCapabilityValue("dim") : this._currentBrightness;
 
     await this.setCapabilityValue("adaptive_mode", this._mode);
     await this.setCapabilityValue("light_temperature", this._currentTemperature);
@@ -269,7 +268,7 @@ this.log('------------------ min_brightness: ', this.getSetting("min_brightness"
       this.log(`Brightness updated to be ${brightness * 100}% in range ${this._sunsetBrightness * 100}% - ${this._noonBrightness * 100}%`);
     }
     else {
-      this.log(`No change in brightness from ${this._currentBrightness}%`)
+      this.log(`No change in brightness from ${this._currentBrightness * 100}%`)
     }
 
     // Temperature
