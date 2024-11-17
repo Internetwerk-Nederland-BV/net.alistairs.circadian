@@ -45,6 +45,26 @@
           "en": "%",
           "nl": "%"
         }
+      },
+      {
+        "id": "midnight_temp",
+        "type": "number",
+        "label": {
+          "en": "Midnight Colour Temperature",
+          "nl": "Kleurtemperatuur Middernacht"
+        },
+        "value": 100,
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "hint": {
+          "en": "The coolest colour is 0, the warmest is 100.",
+          "nl": "De koelste kleur is 0, de warmste is 100."
+        },
+        "units": {
+          "en": "%",
+          "nl": "%"
+        }
       }
     ]
   },
@@ -55,6 +75,22 @@
       "nl": "Dim Niveau"
     },
     "children": [
+      {
+        "id": "noon_brightness",
+        "type": "number",
+        "label": {
+          "en": "Noon Brightness",
+          "nl": "Dim Niveau Middaguur"
+        },
+        "value": 100,
+        "min": 1,
+        "max": 100,
+        "step": 1,
+        "units": {
+          "en": "%",
+          "nl": "%"
+        }
+      },
       {
         "id": "min_brightness",
         "type": "number",
@@ -72,19 +108,125 @@
         }
       },
       {
-        "id": "max_brightness",
+        "id": "midnight_brightness",
         "type": "number",
         "label": {
-          "en": "Maximum Brightness",
-          "nl": "Maximale Dim Niveau"
+          "en": "Midnight Brightness",
+          "nl": "Dim Niveau Middernacht"
         },
-        "value": 100,
+        "value": 10,
         "min": 1,
         "max": 100,
         "step": 1,
         "units": {
           "en": "%",
           "nl": "%"
+        }
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Simulated Day",
+      "nl": "Gesimuleerde Dag"
+    },
+    "children": [
+      {
+        "id": "simulated_day",
+        "type": "dropdown",
+        "label": {
+          "en": "Simulated Day",
+          "nl": "Gesimuleerde Dag"
+        },
+        "hint": {
+          "en": "This zone will simulate the circadian rythm of the chosen day. Equinoxes are the days where the sun passes the equator (equal day/night). Solstices are the days with the most southern/northern sun positions (longest/shortest day).",
+          "nl": "Deze zone simuleert het circadiaans ritme van de gekozen dag. Equinoxen zijn de dagen waarop de zon de evenaar passeert (gelijke dag/nacht). Zonnewendes zijn de dagen met de zon op de kreeft-/steenbok-keerkring (langste/kortste dag)."
+        },
+        "value": "current",
+        "values": [
+          {
+            "id": "current",
+            "label": {
+              "en": "Current Date",
+              "nl": "Huidige Datun"
+            }
+          },
+          {
+            "id": "march_equinox",
+            "label": {
+              "en": "March Equinox",
+              "nl": "Equinox Maart"
+            }
+          },
+          {
+            "id": "june_solstice",
+            "label": {
+              "en": "June Solstice",
+              "nl": "Zonnewende Juni"
+            }
+          },
+          {
+            "id": "september_equinox",
+            "label": {
+              "en": "September Equinox",
+              "nl": "Equinox September"
+            }
+          },
+          {
+            "id": "december_solstice",
+            "label": {
+              "en": "December Solstice",
+              "nl": "Zonnewende December"
+            }
+          },
+          {
+            "id": "given",
+            "label": {
+              "en": "Given Date Below",
+              "n": "Onderstaande Datum"
+            }
+          }
+        ]
+      },
+      {
+        "id": "given_month",
+        "type": "number",
+        "label": {
+          "en": "Simualted Month",
+          "nl": "Gesimuleerde Maand"
+        },
+        "hint": {
+          "en": "Simulated Month will be ignored unless 'Given Date' is chosen above.",
+          "nl": "Gesimuleerde Maand wordt genegeerd tenzij 'Onderstaande Datum' is gekozen."
+        },
+        "value": 1,
+        "min": 1,
+        "max": 12,
+        "step": 1,
+        "units": {
+          "en": "month",
+          "nl": "maand"
+        }
+      },
+      {
+        "id": "given_day",
+        "type": "number",
+        "label": {
+          "en": "Simualted Day",
+          "nl": "Gesimuleerde Dag"
+        },
+        "hint": {
+          "en": "Simualted Day will be ignored unless 'Given Date' is chosen above.",
+          "nl": "Gesimuleerde Dag wordt genegeerd tenzij 'Onderstaande Datum' is gekozen."
+        },
+        "value": 1,
+        "min": 1,
+        "max": 31,
+        "step": 1,
+        "units": {
+          "en": "month day",
+          "nl": "maanddag"
         }
       }
     ]
@@ -111,7 +253,7 @@
           "en": "%",
           "nl": "%"
         }
-     },
+      },
       {
         "id": "night_temp",
         "type": "number",

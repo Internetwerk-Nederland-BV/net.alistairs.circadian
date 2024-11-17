@@ -6,11 +6,16 @@ export class CircadianZone extends Homey.Device {
   private _mode: string = "adaptive";
   private _sunsetTemp: number = 1.00;
   private _noonTemp: number = 0.40;
-  private _minBrightness: number = 0.10;
-  private _maxBrightness: number = 1.00;
+  private _midnightTemp: number = 1.00;
+  private _sunsetBrightness: number = 0.10;
+  private _noonBrightness: number = 1.00;
+  private _midnightBrightness: number = 0.10;
   private _nightTemperature: number = 1.00;
   private _nightBrightness: number = 0.10;
-  private _currentBrightness: number = this._maxBrightness;
+  private _simulatedDay: string = "current";
+  private _givenMonth: number = 1;
+  private _givenDay: number = 1;
+  private _currentBrightness: number = this._noonBrightness;
   private _currentTemperature: number = this._noonTemp;
 
   /**
@@ -66,10 +71,26 @@ export class CircadianZone extends Homey.Device {
     this._mode = this.getCapabilityValue("adaptive_mode") || this._mode;
     this._sunsetTemp = (typeof this.getSetting("sunset_temp") !== "undefined") ? Math.round(this.getSetting("sunset_temp")) / 100 : this._sunsetTemp;
     this._noonTemp = (typeof this.getSetting("noon_temp") !== "undefined") ? Math.round(this.getSetting("noon_temp")) / 100 : this._noonTemp;
-    this._minBrightness = (typeof this.getSetting("min_brightness") !== "undefined") ? Math.round(this.getSetting("min_brightness")) / 100 : this._minBrightness;
-    this._maxBrightness = (typeof this.getSetting("max_brightness") !== "undefined") ? Math.round(this.getSetting("max_brightness")) / 100 : this._maxBrightness;
+    this._midnightTemp = (typeof this.getSetting("midnight_temp") !== "undefined") ? Math.round(this.getSetting("midnight_temp")) / 100 : this._midnightTemp;
+    if (typeof this.getSetting("min_brightness") !== "undefined" && typeof this.getSetting("max_brightness") !== "undefined" && this.getSetting("min_brightness") !== -1 && this.getSetting("max_brightness") !== -1) {
+      //transfer old min_/max_brightness to noon_/sunset_/midnight_brightness ONCE
+this.log('------------------ BOECHIE UPGRADING FROM OLD VERSION');
+this.log('------------------ max_brightness: ', this.getSetting("max_brightness"));
+this.log('------------------ min_brightness: ', this.getSetting("min_brightness"));
+      this._noonBrightness = this.getSetting("max_brightness");
+      this._sunsetBrightness = this.getSetting("min_brightness");
+      this._midnightBrightness = this.getSetting("min_brightness");
+  //await this.setSettings({min_brightness: -1, max_brightness: -1, noon_brightness: this._noonBrightness, sunset_brightness: this._sunsetBrightness, midnight_brightness: this._midnightBrightness});
+    } else {
+      this._noonBrightness = (typeof this.getSetting("noon_brightness") !== "undefined") ? Math.round(this.getSetting("noon_brightness")) / 100 : this._noonBrightness;
+      this._sunsetBrightness = (typeof this.getSetting("sunset_brightness") !== "undefined") ? Math.round(this.getSetting("sunset_brightness")) / 100 : this._sunsetBrightness;
+      this._midnightBrightness = (typeof this.getSetting("midnight_brightness") !== "undefined") ? Math.round(this.getSetting("midnight_brightness")) / 100 : this._midnightBrightness;
+    }
     this._nightTemperature = (typeof this.getSetting("night_temp") !== "undefined") ? Math.round(this.getSetting("night_temp")) / 100 : this._nightTemperature;
     this._nightBrightness = (typeof this.getSetting("night_brightness") !== "undefined") ? Math.round(this.getSetting("night_brightness")) / 100 : this._nightBrightness;
+    this._simulatedDay = this.getSetting("simulated_day") || this._simulatedDay;
+    this._givenMonth = this.getSetting("given_month") || this._givenMonth;
+    this._givenDay = this.getSetting("given_day") || this._givenDay;
     this._currentTemperature = (typeof this.getCapabilityValue("light_temperature") !== "undefined") ? this.getCapabilityValue("light_temperature") : this._currentTemperature;
     this._currentBrightness = (typeof this.getCapabilityValue("dim") !== "undefined") ? this.getCapabilityValue("dim") : this._currentBrightness;
 
@@ -114,21 +135,63 @@ export class CircadianZone extends Homey.Device {
    * @param {string[]} event.changedKeys An array of keys changed since the previous version
    * @returns {Promise<string|void>} return a custom message that will be displayed
    */
-  async onSettings(event: { oldSettings: {}, newSettings: {max_brightness: number, min_brightness: number, night_brightness: number, night_temp: number, sunset_temp: number, noon_temp:number}, changedKeys: [] }): Promise<string|void> {
-    // Sanity check
-    if (!(event.newSettings.sunset_temp > event.newSettings.noon_temp)) {
-      return this.homey.__("temperature_error");
-    }
+  async onSettings(event: { oldSettings: {}, newSettings: {noon_brightness: number, sunset_brightness: number, midnight_brightness: number, night_brightness: number, night_temp: number, noon_temp: number, sunset_temp: number, midnight_temp: number, simulated_day: string, given_month: number, given_day: number}, changedKeys: [string] }): Promise<string|void> {
+    // Sanity check, not needed! sunset_temp can be <= noon_temp, especially needed when you want to invert the algorithm as requested.
+    // if (!(event.newSettings.sunset_temp > event.newSettings.noon_temp)) {
+    //   return this.homey.__("temperature_error");
+    // }
 
     // Update settings
     this.log(`CircadianZone settings were changed - ${JSON.stringify(event.newSettings)}`);
-    this._maxBrightness = event.newSettings.max_brightness / 100;
-    this._minBrightness = event.newSettings.min_brightness / 100;
+    this._noonBrightness = event.newSettings.noon_brightness / 100;
+    this._sunsetBrightness = event.newSettings.sunset_brightness / 100;
+    this._midnightBrightness = event.newSettings.midnight_brightness / 100;
     this._noonTemp = event.newSettings.noon_temp / 100;
     this._sunsetTemp = event.newSettings.sunset_temp / 100;
+    this._midnightTemp = event.newSettings.midnight_temp / 100;
     this._nightBrightness = event.newSettings.night_brightness / 100;
     this._nightTemperature = event.newSettings.night_temp / 100;
-    await this.refreshZone();
+    if (event.changedKeys.includes('simulated_day') || event.changedKeys.includes('given_month') || event.changedKeys.includes('given_day')) {
+      this._simulatedDay = event.newSettings.simulated_day;
+      switch(this._simulatedDay) {
+        case 'march_equinox': {
+          this._givenMonth = 3;
+          this._givenDay = 20;
+          break;
+        }
+        case 'june_solstice': {
+          this._givenMonth = 6;
+          this._givenDay = 21;
+          break;
+        }
+        case 'september_equinox': {
+          this._givenMonth = 9;
+          this._givenDay = 22;
+          break;
+        }
+        case 'december_solstice': {
+          this._givenMonth = 12;
+          this._givenDay = 21;
+          break;
+        }
+        default: {
+          this._givenMonth = event.newSettings.given_month;
+          this._givenDay = event.newSettings.given_day;
+          if (this._givenMonth == 2 && this._givenDay == 29) {
+            this._givenDay = 28;
+          }
+          let given = new Date((new Date()).getFullYear(), this._givenMonth - 1, this._givenDay);
+          this._givenMonth = given.getMonth() + 1;
+          this._givenDay = given.getDate();
+        }
+      }
+      setTimeout(async () => {
+        await this.setSettings({given_month: this._givenMonth, given_day: this._givenDay});
+        this.refreshZone();
+      }, 1);
+    } else {
+      await this.refreshZone();
+    }
   }
 
   /**
@@ -193,14 +256,17 @@ export class CircadianZone extends Homey.Device {
 
     this.log(`${this.getName()} is updating from percentage ${percentage * 100}%...`);
 
+    //BOECHIE TODO
+    //await this.setCapabilityValue("percentage", percentage);
+
     // Brightness
-    const brightnessDelta = this._maxBrightness - this._minBrightness;
-    let brightness = Math.round(((percentage > 0) ? (brightnessDelta * percentage) + this._minBrightness : this._minBrightness) * 100) / 100;
+    const brightnessDelta = this._noonBrightness - this._sunsetBrightness;
+    let brightness = Math.round(((percentage > 0) ? (brightnessDelta * percentage) + this._sunsetBrightness : this._sunsetBrightness) * 100) / 100;
     if (brightness != this._currentBrightness) {
       this._currentBrightness = brightness;
       await this.setCapabilityValue("dim", brightness);
       valuesChanged = true;
-      this.log(`Brightness updated to be ${brightness * 100}% in range ${this._minBrightness * 100}% - ${this._maxBrightness * 100}%`);
+      this.log(`Brightness updated to be ${brightness * 100}% in range ${this._sunsetBrightness * 100}% - ${this._noonBrightness * 100}%`);
     }
     else {
       this.log(`No change in brightness from ${this._currentBrightness}%`)
@@ -208,7 +274,7 @@ export class CircadianZone extends Homey.Device {
 
     // Temperature
     const tempDelta = this._sunsetTemp - this._noonTemp;
-    let calculatedTemperature = (tempDelta * (1-percentage)) + this._noonTemp; // Temperature gets less as we move to noon
+    let calculatedTemperature = (tempDelta * (1-percentage)) + this._noonTemp; // Temperature gets less (or more, when inverted) as we move to noon
     let temperature = Math.round(((percentage > 0) ? calculatedTemperature : this._sunsetTemp) * 100) / 100;
     if (temperature != this._currentTemperature) {
       this._currentTemperature = temperature;

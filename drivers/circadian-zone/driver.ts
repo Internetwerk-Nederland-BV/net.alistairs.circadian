@@ -89,7 +89,7 @@ this.log(formatter.formatToParts(EQ));
    */
   async _updateCircadianZones() {
     this.log("Updating circadian zones with recalculated percentage...");
-    this._circadianPercentage = this._recalculateCircadianPercentage();
+    this._circadianPercentage = this._recalculateCircadianPercentage(new Date());
     this.getDevices().forEach(async device => {
       await (device as CircadianZone).updateFromPercentage(this._circadianPercentage);
     });
@@ -104,7 +104,7 @@ this.log(formatter.formatToParts(EQ));
    * @returns {number} percentage progress through the day
    * 
    */
-  private _recalculateCircadianPercentage(): number {
+  private _recalculateCircadianPercentage(simulatedDate: Date): number {
 
     // Debug
     this.log("Recalculating...");
@@ -113,18 +113,21 @@ this.log(formatter.formatToParts(EQ));
     const latitude: number = this.homey.geolocation.getLatitude();
     const longitude: number = this.homey.geolocation.getLongitude();
     const now = new Date();
+    let simulatedDateTime = simulatedDate;
+    simulatedDateTime.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+    //Boechie TODO: correct for DST!!!!
 
     // Calculate times
-    let sunTools = new SunTools(now, latitude, longitude);
+    let sunTools = new SunTools(simulatedDateTime, latitude, longitude);
     this.log(`SunTools: ${sunTools}`);
     sunTools.keyEvents.forEach(event => {
-      this.log(`    ${event} Before: ${event.timestamp.getTime() < now.getTime()}`);
+      this.log(`    ${event} Before: ${event.timestamp.getTime() < simulatedDateTime.getTime()}`);
     });
-    let nextEvent = sunTools.getNextEvent(now);
-    let lastEvent = sunTools.getLastEvent(now);
+    let nextEvent = sunTools.getNextEvent(simulatedDateTime);
+    let lastEvent = sunTools.getLastEvent(simulatedDateTime);
 
     // Debug
-    this.log(`Now: ${now}`);
+    this.log(`simulatedDateTime: ${simulatedDateTime}`);
     this.log(`Previously: ${lastEvent}`);
     this.log(`Next: ${nextEvent}`);
 
@@ -144,14 +147,14 @@ this.log(formatter.formatToParts(EQ));
     }
     k = ((nextEvent instanceof SunEventSunset) || (nextEvent instanceof SunEventSolarNoon)) ? 1 : -1;
 
-    let percentage = (0 - k) * ((now.getTime() - h) / (h - x)) ** 2 + k;
+    let percentage = (0 - k) * ((simulatedDateTime.getTime() - h) / (h - x)) ** 2 + k;
     this.log(`Percentage: ${percentage}%`);
     return percentage;
   }
 
   getPercentage(): number {
     if (this._circadianPercentage == -1) {
-      this._circadianPercentage = this._recalculateCircadianPercentage();
+      this._circadianPercentage = this._recalculateCircadianPercentage(new Date());
     }
     return this._circadianPercentage;
   }
