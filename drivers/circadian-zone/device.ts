@@ -72,7 +72,7 @@ export class CircadianZone extends Homey.Device {
     this._sunsetTemp = (this.getSetting("sunset_temp") !== null) ? Math.round(this.getSetting("sunset_temp")) / 100 : this._sunsetTemp;
     this._noonTemp = (this.getSetting("noon_temp") !== null) ? Math.round(this.getSetting("noon_temp")) / 100 : this._noonTemp;
     if (this.getSetting("min_brightness") !== null && this.getSetting("max_brightness") !== null) {
-      //transfer old min_/max_brightness to new noon_/sunset_/midnight_brightness and sunset_temp to new midnight_temp ONCE to retain already existing zones before upgrade
+      //transfer old min_/max_brightness to new noon_/sunset_/midnight_brightness and sunset_temp to new midnight_temp ONCE to retain current behaviour for already existing zones before upgrade
       this.log('Version upgrade: Upgrading settings from old app version.');
       this._midnightTemp = this._sunsetTemp;
       this._noonBrightness = Math.round(this.getSetting("max_brightness")) / 100;
