@@ -252,8 +252,8 @@ export class CircadianZone extends Homey.Device {
    */
   public async updateFromPercentage(percentage: number) {
 
-    if (this._currentSolarHeight !== Math.round(percentage)) {
-      this._currentSolarHeight = Math.round(percentage);
+    if (this._currentSolarHeight !== Math.round(percentage * 100)) {
+      this._currentSolarHeight = Math.round(percentage * 100);
       await this.setCapabilityValue("measure_solar_height", this._currentSolarHeight);
     }
 
