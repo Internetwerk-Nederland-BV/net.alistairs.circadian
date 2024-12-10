@@ -17,5 +17,5 @@
     "uiComponent": "sensor",
     "uiQuickAction": false,
     "insights": true,
-    "icon": "/assets/images/circadian_brightness.svg"
+    "icon": "/assets/images/measure_solar_height.svg"
 }
