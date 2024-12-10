@@ -17,6 +17,7 @@ export class CircadianZone extends Homey.Device {
   private _givenDay: number = 1;
   private _currentBrightness: number = this._noonBrightness;
   private _currentTemperature: number = this._noonTemp;
+  private _currentSolarHeight: number = 0;
 
   /**
    * set the current mode, notifying if appropriate
@@ -92,10 +93,16 @@ export class CircadianZone extends Homey.Device {
     this._givenDay = this.getSetting("given_day") || this._givenDay;
     this._currentTemperature = (this.getCapabilityValue("light_temperature") !== null) ? this.getCapabilityValue("light_temperature") : this._currentTemperature;
     this._currentBrightness = (this.getCapabilityValue("dim") !== null) ? this.getCapabilityValue("dim") : this._currentBrightness;
+    this._currentSolarHeight = (this.getCapabilityValue("measure_solar_height") !== null) ? this.getCapabilityValue("measure_solar_height") : this._currentSolarHeight;
 
+    //add capability for already existing zones before upgrade
+    if (!this.hasCapability("measure_solar_height")) {
+      await this.addCapability("measure_solar_height");
+    }
     await this.setCapabilityValue("adaptive_mode", this._mode);
     await this.setCapabilityValue("light_temperature", this._currentTemperature);
     await this.setCapabilityValue("dim", this._currentBrightness);
+    await this.setCapabilityValue("measure_solar_height", this._currentSolarHeight);
 
     // Mode Listener
     this.registerCapabilityListener("adaptive_mode", async (value) => {
@@ -245,6 +252,11 @@ export class CircadianZone extends Homey.Device {
    */
   public async updateFromPercentage(percentage: number) {
 
+    if (this._currentSolarHeight !== Math.round(percentage)) {
+      this._currentSolarHeight = Math.round(percentage);
+      await this.setCapabilityValue("measure_solar_height", this._currentSolarHeight);
+    }
+
     let valuesChanged: boolean = false;
 
     // Sanity check for adaptive mode
@@ -254,9 +266,6 @@ export class CircadianZone extends Homey.Device {
     }
 
     this.log(`${this.getName()} is updating from percentage ${percentage * 100}%...`);
-
-    //BOECHIE TODO
-    //await this.setCapabilityValue("percentage", percentage);
 
     // Brightness
     const brightnessDelta = this._noonBrightness - this._sunsetBrightness;

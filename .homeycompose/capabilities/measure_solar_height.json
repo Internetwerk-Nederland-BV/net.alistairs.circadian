@@ -1,0 +1,21 @@
+{
+    "type": "number",
+    "title": {
+        "en": "Relative Solar Height",
+        "nl": "Relatieve Zonhoogte"
+    },
+    "units": {
+        "en": "%",
+        "nl": "%"
+    },
+    "min": -100,
+    "max": 100,
+    "step": 1,
+    "decimals": 0,
+    "getable": true,
+    "setable": false,
+    "uiComponent": "sensor",
+    "uiQuickAction": false,
+    "insights": true,
+    "icon": "/assets/images/circadian_brightness.svg"
+}
