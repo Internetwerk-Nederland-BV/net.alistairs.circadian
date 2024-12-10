@@ -268,28 +268,26 @@ export class CircadianZone extends Homey.Device {
     this.log(`${this.getName()} is updating from percentage ${percentage * 100}%...`);
 
     // Brightness
-    const brightnessDelta = this._noonBrightness - this._sunsetBrightness;
-    let brightness = Math.round(((percentage > 0) ? (brightnessDelta * percentage) + this._sunsetBrightness : this._sunsetBrightness) * 100) / 100;
+    const brightnessDelta = percentage > 0 ? this._noonBrightness - this._sunsetBrightness : this._sunsetBrightness - this._midnightBrightness;
+    let brightness = Math.round((brightnessDelta * percentage + this._sunsetBrightness) * 100) / 100;
     if (brightness != this._currentBrightness) {
       this._currentBrightness = brightness;
       await this.setCapabilityValue("dim", brightness);
       valuesChanged = true;
-      this.log(`Brightness updated to be ${brightness * 100}% in range ${this._sunsetBrightness * 100}% - ${this._noonBrightness * 100}%`);
+      this.log(`Brightness updated to be ${brightness * 100}% in range ${this._sunsetBrightness * 100}% - ${(percentage > 0 ? this._noonBrightness : this._midnightBrightness) * 100}%`);
     }
     else {
       this.log(`No change in brightness from ${this._currentBrightness * 100}%`)
     }
 
     // Temperature
-    const tempDelta = this._sunsetTemp - this._noonTemp;
-    let calculatedTemperature = (tempDelta * (1-percentage)) + this._noonTemp; // Temperature gets less (or more, when inverted) as we move to noon
-    let temperature = Math.round(((percentage > 0) ? calculatedTemperature : this._sunsetTemp) * 100) / 100;
+    const tempDelta = percentage > 0 ? this._noonTemp - this._sunsetTemp : this._sunsetTemp - this._midnightTemp; // Temperature gets less (or more, when inverted) as we move to noon
+    let temperature = Math.round((tempDelta * percentage + this._sunsetTemp) * 100) / 100;
     if (temperature != this._currentTemperature) {
       this._currentTemperature = temperature;
-      this.log(`Temperature updated to be ${temperature * 100}% in range ${this._sunsetTemp * 100}% - ${this._noonTemp * 100}%`);
       await this.setCapabilityValue("light_temperature", temperature);
       valuesChanged = true;
-      this.log(`Temperature updated to be ${temperature * 100}% in range ${this._sunsetTemp * 100}% - ${this._noonTemp * 100}%`);
+      this.log(`Temperature updated to be ${temperature * 100}% in range ${this._sunsetTemp * 100}% - ${(percentage > 0 ? this._noonTemp : this._midnightTemp) * 100}%`);
     }
     else {
       this.log(`No change in temperature from ${this._currentTemperature * 100}%`)
