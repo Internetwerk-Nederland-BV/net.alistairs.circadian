@@ -1,25 +1,29 @@
 {
     "type": "enum",
     "title": {
-        "en": "Mode"
+        "en": "Mode",
+        "nl": "Modus"
     },
     "values": [
         {
             "id": "adaptive",
             "title": {
-                "en": "Adaptive"
+                "en": "Adaptive",
+                "nl": "Adaptief"
             }
         },
         {
             "id": "night",
             "title": {
-                "en": "Night"
+                "en": "Night",
+                "nl": "Nacht"
             }
         },
         {
             "id": "manual",
             "title": {
-                "en": "Manual"
+                "en": "Manual",
+                "nl": "Handmatig"
             }
         }
     ],
